@@ -45,11 +45,13 @@ export default function OkeyKameraHesaplayici() {
     const canvas = canvasRef.current;
 
     if (video && canvas) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      const maxWidth = 800;
+      const scale = Math.min(maxWidth / video.videoWidth, 1);
+      canvas.width = video.videoWidth * scale;
+      canvas.height = video.videoHeight * scale;
       const ctx = canvas.getContext('2d');
-      ctx?.drawImage(video, 0, 0);
-      const imageData = canvas.toDataURL('image/jpeg', 0.8);
+      ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL('image/jpeg', 0.6);
       setFotograf(imageData);
       kameraKapat();
     }

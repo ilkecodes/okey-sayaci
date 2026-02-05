@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
-    const { image } = await request.json();
+    const body = await request.text();
+    const parsed = JSON.parse(body);
+    const image = parsed?.image;
 
-    if (!image) {
+    if (!image || image.length === 0) {
       return NextResponse.json({ error: 'Resim bulunamadi' }, { status: 400 });
     }
 
