@@ -13,21 +13,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'API key yapilandirilmamis' }, { status: 500 });
     }
 
-    const prompt = `Bu fotoğrafta Okey 101 oyunundan taşlar var. Lütfen fotoğraftaki TÜM taşları tespit et ve say. Her taşın sayısını ve rengini belirle (kırmızı, siyah, mavi, sarı).
+    const prompt = `Sen deneyimli bir 101 Okey uzmanısın. Bu fotoğrafta 101 Okey oyunundan taşlar (perler) var.
+
+GÖREV: Fotoğraftaki TÜM taşları tespit et, sayılarını ve renklerini belirle.
+
+101 OKEY KURALLARI:
+- Perlerin toplam değeri 101 veya daha fazla olmalıdır
+- Her taşın puanı kendi sayısına eşittir (örn: 7 taşı = 7 puan)
+- Okey (sahte joker) taşı varsa, temsil ettiği taşın değerini kullan
+- Sahte okey işareti olan taşlar (yıldızlı taşlar) varsa belirt
+
+HIZLI HESAPLAMA YÖNTEMİ (Bilgi için):
+- 3'lü perlerin ortasını al, ortalar 33-34 ederse el açılabilir
+- 4'lü/5'lü perlerde: 3'lü kısmın ortası + (yan taşlar toplamı ÷ 3)
 
 SADECE aşağıdaki JSON formatında cevap ver, başka hiçbir şey yazma:
 
 {
   "taslar": [
     {"sayi": 5, "renk": "kirmizi"},
-    {"sayi": 7, "renk": "siyah"}
+    {"sayi": 7, "renk": "siyah"},
+    {"sayi": 13, "renk": "mavi"}
   ],
-  "toplam_puan": 12,
-  "aciklama": "2 taş tespit edildi"
+  "toplam_puan": 25,
+  "aciklama": "3 tas tespit edildi. Ornek: 5 kirmizi, 7 siyah, 13 mavi"
 }
 
-Renkleri şöyle belirt: kirmizi, siyah, mavi, sari
-Her taşın puanı kendi sayısına eşittir. Toplam puanı hesapla.`;
+RENKLER: kirmizi, siyah, mavi, sari (sadece bu 4 renk)
+SAYILAR: 1-13 arası (Okey taşları için temsil ettikleri değeri yaz)
+
+ÖNEMLİ:
+- Fotoğrafta gördüğün HER taşı listele
+- Taşların üzerindeki sayıları dikkatlice oku
+- Toplam puanı doğru hesapla (tüm taşların sayılarının toplamı)`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
@@ -54,7 +72,7 @@ Her taşın puanı kendi sayısına eşittir. Toplam puanı hesapla.`;
           ],
           generationConfig: {
             temperature: 0.1,
-            maxOutputTokens: 1000,
+            maxOutputTokens: 2000,
           },
         }),
       }
